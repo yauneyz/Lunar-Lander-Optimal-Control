@@ -1,0 +1,124 @@
+\documentclass{article}
+\title{Project Outline}
+\author{Zac Yauney, Andrew Williams}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+
+% Custom commands and operators
+\newcommand\range{\mathscr{R}}
+\newcommand\n{\mathcal{N}}
+\newcommand\F{\mathbb{F}}
+\newcommand\C{\mathbb{C}}
+\newcommand\Z{\mathbb{Z}}
+\newcommand\E{\mathbb{E}}
+\newcommand\R{\mathbb{R}}
+\newcommand\bo{\mathcal{O}}
+\newcommand\ip[2]{\langle #1,#2\rangle}
+\newcommand\norm[1]{||#1||}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\proj}{proj}
+\DeclareMathOperator{\Skew}{Skew}
+\DeclareMathOperator{\Sym}{Sym}
+\DeclareMathOperator{\Res}{Res}
+\DeclareMathOperator{\spn}{span}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\argmax}{argmax}
+
+
+\begin{document}
+\maketitle
+
+As a reminder, the purpose of this project is to solve optimal control to allow a rocket to land upright with minimal velocity and expending minimal fuel. Control is given by choosing how much to fire both the vertical and rotational thrusters at each point in time.
+
+We will be modeling this with discrete time.
+
+\section{State Equations}
+
+We set this problem up for LQR Optimization with the following scheme
+
+\[
+	\mathbf{x} =
+	\begin{bmatrix}
+		x\\
+		y\\
+		x'\\
+		y'\\
+		\theta\\
+		T
+\end{bmatrix}
+\mathbf{u}' =
+	\begin{bmatrix}
+		p\\
+		r\\
+		g
+\end{bmatrix}
+\]
+\[
+	A=\begin{bmatrix}
+		0 &0 &dt &0 &0 &0\\
+		0 &0 &0 &dt &0 &0\\
+		0 &0 &0 &0 &0 &\cos(\theta)\\
+		0 &0 &0 &0 &0 &\sin(\theta)\\
+		0 &0 &0 &0 &0 &0\\
+		0 &0 &0 &0 &0 &0\\
+\end{bmatrix}
+\]
+\[
+	B=\begin{bmatrix}
+		0 &0 &0 \\
+		0 &0 &0 \\
+		0 &0 &0 \\
+		0 &0 &dt \\
+		0 &dt &0 \\
+		dt &0 &0 \\
+\end{bmatrix}
+\]
+\[
+	\mathbf{x}' = A\mathbf{x} + B\mathbf{u}
+\]
+
+
+and we have the following definitions for our variables:
+\[
+ x = \text{x position}
+\]
+\[
+ y = \text{y position}
+\]
+\[
+ \theta = \text{Ship's angle relative to vertical}
+\]
+\[
+ T = \text{Current Main Engine Power}
+\]
+\[
+	p = \text{Main Engine Thruster Control}
+\]
+\[
+	r = \text{Rotational Thruster Control}
+\]
+\[
+	g = \text{Gravitational Acceleration Constant}
+\]
+
+
+\section{Cost Function}
+
+\[
+	J[u] = \int_0^t_f
+
+\]
+
+
+\section{Approach}
+We will want to use LQR optimization using the given matrices. The biggest challenge will be linearizing the angle dependent terms.
+
+
+
+
+
+\end{document}
