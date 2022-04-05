@@ -1,6 +1,7 @@
 import pgzrun
 import ship as lander
 import terrain as land
+from controller import get_control
 
 WIDTH = 1400
 HEIGHT = 800
@@ -238,20 +239,23 @@ def update(dt):
             game.ship.setPos(game.x, game.y)
             game.ship.setVel(game.xVel, game.yVel)
 
+            # Get the controls
+            left, right, down, up = get_control()
+            print(left, right, up, down)
             # Left Arrow. Rotate left.
-            if keyboard.left:
+            if left:
                 game.ship.rotate(game.ang - PI / 14.0)
             # Right Arrow. Rotate right.
-            elif keyboard.right:
+            elif right:
                 game.ship.rotate(game.ang + PI / 14.0)
             # Down Arrow. Decrease rocket thrust
-            elif keyboard.down:
+            if down:
                 game.ship.accelerateChange(-1, sounds)
             # Up arrow. Increase rocket thrust
-            elif keyboard.up:
+            elif up:
                 game.ship.accelerateChange(1, sounds)
             # Q key; Effectively quit program
-            elif keyboard.q:
+            if keyboard.q:
                 game.state = 1
 
             # Recalculates ship's hitbox
