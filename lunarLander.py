@@ -8,6 +8,8 @@ DIM = (WIDTH, HEIGHT)
 PI = 3.1415926
 
 # Game class
+
+
 class Game:
     # Initialize game state
     def __init__(self):
@@ -71,6 +73,8 @@ class Game:
 game = Game()
 
 # Main logic for drawing
+
+
 def draw():
     screen.clear()
 
@@ -80,16 +84,15 @@ def draw():
             "LUNAR LANDER",
             (WIDTH / 2 - 250, HEIGHT / 2 - 60),
             fontsize=80,
-            fontname="dylova",
+            fontname="roboto",
         )
-        screen.draw.text(
-            "Press P to play", (WIDTH / 2 - 70, HEIGHT / 2 + 50), fontname="dylova"
-        )
+        screen.draw.text("Press P to play", (WIDTH / 2 - 70, HEIGHT / 2 + 50),
+                         fontname="roboto")
         screen.draw.text(
             "Controls:\nLeft and Right Arrows: Rotate Ship\nUp and Down Arrows: Strengthen/Weaken Thrusters\nQ: Quit game",
             (WIDTH / 2 - 270, HEIGHT / 2 + 120),
             align="center",
-            fontname="dylova",
+            fontname="roboto",
         )
 
     # Playing state
@@ -98,14 +101,21 @@ def draw():
         game.terrain.draw(screen)
         scoreStr = "SCORE    " + str(game.score)
         gasStr = "FUEL       " + str(int(game.gas))
-        altStr = "ALTITUDE                      " + str(int(HEIGHT - 10 - game.y))
+        altStr = "ALTITUDE                      " + \
+            str(int(HEIGHT - 10 - game.y))
         xVelStr = "HORIZONTAL SPEED    " + str(int(game.xVel))
         yVelStr = "VERTICAL SPEED         " + str(int(-game.yVel))
-        screen.draw.text(scoreStr, (40, 40), fontsize=20, fontname="dylova")
-        screen.draw.text(gasStr, (40, 60), fontsize=20, fontname="dylova")
-        screen.draw.text(altStr, (WIDTH - 260, 40), fontsize=20, fontname="dylova")
-        screen.draw.text(xVelStr, (WIDTH - 260, 60), fontsize=20, fontname="dylova")
-        screen.draw.text(yVelStr, (WIDTH - 260, 80), fontsize=20, fontname="dylova")
+        screen.draw.text(scoreStr, (40, 40), fontsize=20, fontname="roboto")
+        screen.draw.text(gasStr, (40, 60), fontsize=20, fontname="roboto")
+        screen.draw.text(altStr, (WIDTH - 260, 40),
+                         fontsize=20,
+                         fontname="roboto")
+        screen.draw.text(xVelStr, (WIDTH - 260, 60),
+                         fontsize=20,
+                         fontname="roboto")
+        screen.draw.text(yVelStr, (WIDTH - 260, 80),
+                         fontsize=20,
+                         fontname="roboto")
 
         # If the ship collided with the terrain, display the correct message
         if game.collided == 1:
@@ -113,7 +123,7 @@ def draw():
                 "YOU CRASHED\nYOU LOST 100 FUEL UNITS",
                 (WIDTH / 2 - 130, HEIGHT / 2 - 30),
                 align="center",
-                fontname="dylova",
+                fontname="roboto",
             )
             if not game.resetScheduled:
                 game.resetScheduled = True
@@ -124,18 +134,18 @@ def draw():
                     "GOOD LANDING\n50 FUEL UNITS ADDED",
                     (WIDTH / 2 - 100, HEIGHT / 2 - 30),
                     align="center",
-                    fontname="dylova",
+                    fontname="roboto",
                 )
             elif game.landingType == 2:
-                screen.draw.text(
-                    "HARD LANDING", (WIDTH / 2 - 75, HEIGHT / 2 - 30), fontname="dylova"
-                )
+                screen.draw.text("HARD LANDING",
+                                 (WIDTH / 2 - 75, HEIGHT / 2 - 30),
+                                 fontname="roboto")
             elif game.landingType == 3:
                 screen.draw.text(
                     "YOU CRASHED\nYOU LOST 100 FUEL UNITS",
                     (WIDTH / 2 - 130, HEIGHT / 2 - 30),
                     align="center",
-                    fontname="dylova",
+                    fontname="roboto",
                 )
             if not game.resetScheduled:
                 game.resetScheduled = True
@@ -147,20 +157,27 @@ def draw():
         game.terrain.draw(screen)
         scoreStr = "SCORE    " + str(game.score)
         gasStr = "FUEL       " + str(int(game.gas))
-        altStr = "ALTITUDE                      " + str(int(HEIGHT - 10 - game.y))
+        altStr = "ALTITUDE                      " + \
+            str(int(HEIGHT - 10 - game.y))
         xVelStr = "HORIZONTAL SPEED    " + str(int(game.xVel))
         yVelStr = "VERTICAL SPEED         " + str(int(-game.yVel))
-        screen.draw.text(scoreStr, (40, 40), fontsize=20, fontname="dylova")
-        screen.draw.text(gasStr, (40, 60), fontsize=20, fontname="dylova")
-        screen.draw.text(altStr, (WIDTH - 260, 40), fontsize=20, fontname="dylova")
-        screen.draw.text(xVelStr, (WIDTH - 260, 60), fontsize=20, fontname="dylova")
-        screen.draw.text(yVelStr, (WIDTH - 260, 80), fontsize=20, fontname="dylova")
+        screen.draw.text(scoreStr, (40, 40), fontsize=20, fontname="roboto")
+        screen.draw.text(gasStr, (40, 60), fontsize=20, fontname="roboto")
+        screen.draw.text(altStr, (WIDTH - 260, 40),
+                         fontsize=20,
+                         fontname="roboto")
+        screen.draw.text(xVelStr, (WIDTH - 260, 60),
+                         fontsize=20,
+                         fontname="roboto")
+        screen.draw.text(yVelStr, (WIDTH - 260, 80),
+                         fontsize=20,
+                         fontname="roboto")
 
         screen.draw.text(
             "YOU RAN OUT OF FUEL\nGAME OVER",
             (WIDTH / 2 - 115, HEIGHT / 2 - 30),
             align="center",
-            fontname="dylova",
+            fontname="roboto",
         )
         if not game.resetScheduled:
             game.resetScheduled = True
@@ -236,7 +253,6 @@ def update(dt):
             # Q key; Effectively quit program
             elif keyboard.q:
                 game.state = 1
-                sounds.rocket_thrust.stop()
 
             # Recalculates ship's hitbox
             game.ship.hitbox()
@@ -247,19 +263,17 @@ def update(dt):
 
             # Crashed
             if game.collided == 1:
-                sounds.rocket_thrust.stop()
                 game.playing = False
                 game.score += 5
                 game.ship.setGas(game.ship.getGas() - 100)
                 game.gas = game.ship.getGas()
-                sounds.explosion.play()
             # Potential landing
             elif game.collided == 2:
-                sounds.rocket_thrust.stop()
                 game.playing = False
 
                 # Checks if the ship landed on a multiplier spot
-                game.multiplier = game.terrain.multiplierCheck(game.ship.getXpos())
+                game.multiplier = game.terrain.multiplierCheck(
+                    game.ship.getXpos())
 
                 # If the user has a good landing
                 if game.yVel < 12 and abs(game.xVel) < 25:
@@ -275,14 +289,12 @@ def update(dt):
                     game.landingType = 3
                     game.score += 5
                     game.ship.setGas(game.ship.getGas() - 100)
-                    sounds.explosion.play()
 
                 # Update game state gas for display
                 game.gas = game.ship.getGas()
 
             # Out of gas
             if game.ship.getGas() <= 0:
-                sounds.rocket_thrust.stop()
                 game.gas = game.ship.getGas()
                 game.state = 3
 

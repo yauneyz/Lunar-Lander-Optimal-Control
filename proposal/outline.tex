@@ -105,20 +105,47 @@ and we have the following definitions for our variables:
 	g = \text{Gravitational Acceleration Constant}
 \]
 
+We also have boundary conditions
+\[
+	x(t_f)=0
+\]
+\[
+	y(t_f)=0
+\]
+
+The initial conditions vary from iteration to iteration. We start in a random location with varying amounts of fuel.
+
 
 \section{Cost Function}
 
 \[
-	J[u] = \int_0^t_f
-
+	J[u] = \int_0^{t_f} \mathbf{u}^\intercal R(t)\mathbf{u}dt +\mathbf{x_f}^\intercal M \mathbf{x_f}
 \]
+
+\[
+R = \begin{bmatrix}
+	1 & 0 & 0\\
+	0 & 1 & 0\\
+	0 & 0 & 0\\
+\end{bmatrix}
+\]
+
+\[
+M = \begin{bmatrix}
+	0 & 0& 0& 0& 0& 0 \\
+	0 & 0& 0& 0& 0& 0 \\
+	0 & 0& 1& 0& 0& 0 \\
+	0 & 0& 0& 1& 0& 0 \\
+	0 & 0& 0& 0& 0& 0 \\
+	0 & 0& 0& 0& 0& 0 \\
+	0 & 0& 0& 0& 0& 0 \\
+\end{bmatrix}
+\]
+which means $Q(t)=0$
 
 
 \section{Approach}
 We will want to use LQR optimization using the given matrices. The biggest challenge will be linearizing the angle dependent terms.
 
-
-
-
-
+Once we have the linearization figured out, we will take the initial conditions and numerically solve for the optimal control, which we will feed into a simulator program that will let us watch the progress of our algorithm in real time.
 \end{document}

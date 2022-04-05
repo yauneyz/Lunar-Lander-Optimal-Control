@@ -3,6 +3,8 @@ import math
 PI = 3.1415926
 
 # Ship class
+
+
 class Ship:
     # Initialize ship state
     def __init__(self):
@@ -99,9 +101,9 @@ class Ship:
 
     # Calculate new x and y velocities based on thrust power. Consumes gas.
     def accelerate(self, xv, yv):
-        xv = xv + .09*self.accMode*math.cos(self.ang)
-        yv = yv + .175*self.accMode*math.sin(self.ang)
-        self.gas = self.gas - .08*self.accMode
+        xv = xv + .09 * self.accMode * math.cos(self.ang)
+        yv = yv + .175 * self.accMode * math.sin(self.ang)
+        self.gas = self.gas - .08 * self.accMode
         if self.gas < 0:
             self.gas = 0
         return xv, yv
@@ -109,27 +111,41 @@ class Ship:
     # Change thrust power based on given modifier. Max thrust power of 8 and min of 0.
     def accelerateChange(self, modifier, sounds):
         self.accMode = self.accMode + modifier
-        if self.accMode > 0:
-            sounds.rocket_thrust.play(-1)
         if self.accMode < 0 or self.accMode > 8:
             self.accMode = self.accMode - modifier
-        if self.accMode == 0:
-            sounds.rocket_thrust.stop()
         if self.gas <= 0:
             self.accMode = 0
 
     # Draw ship
     def draw(self, screen):
-        screen.draw.line((self.xpos - 6.0*math.cos(self.ang + (PI / 6.0)), self.ypos - 6.0*math.sin(self.ang + PI / 6.0)),
-            (self.xpos - 12.0*math.cos(self.ang + (PI / 6.0)), self.ypos - 12.0*math.sin(self.ang + PI / 6.0)), (255, 255, 255))
-        screen.draw.line((self.xpos - 6.0*math.cos(self.ang - (PI / 6.0)), self.ypos - 6.0*math.sin(self.ang - PI / 6.0)),
-            (self.xpos - 12.0*math.cos(self.ang - (PI / 6.0)), self.ypos - 12.0*math.sin(self.ang - PI / 6.0)), (255, 255, 255))
+        screen.draw.line((self.xpos - 6.0 * math.cos(self.ang + (PI / 6.0)),
+                          self.ypos - 6.0 * math.sin(self.ang + PI / 6.0)),
+                         (self.xpos - 12.0 * math.cos(self.ang + (PI / 6.0)),
+                          self.ypos - 12.0 * math.sin(self.ang + PI / 6.0)),
+                         (255, 255, 255))
+        screen.draw.line((self.xpos - 6.0 * math.cos(self.ang - (PI / 6.0)),
+                          self.ypos - 6.0 * math.sin(self.ang - PI / 6.0)),
+                         (self.xpos - 12.0 * math.cos(self.ang - (PI / 6.0)),
+                          self.ypos - 12.0 * math.sin(self.ang - PI / 6.0)),
+                         (255, 255, 255))
         if self.accMode > 0:
-            screen.draw.line((self.xpos - 6.0*math.cos(self.ang + (PI / 6.0)), self.ypos - 6.0*math.sin(self.ang + PI / 6.0)),
-                (self.xpos - 6.0*math.cos(self.ang) - (float(self.accMode))*2.0*math.cos(self.ang), self.ypos - 6.0*math.sin(self.ang) -(float(self.accMode))*2.0*math.sin(self.ang)), (255, 255, 255))
-            screen.draw.line((self.xpos - 6.0*math.cos(self.ang - (PI / 6.0)), self.ypos - 6.0*math.sin(self.ang - PI / 6.0)),
-                (self.xpos - 6.0*math.cos(self.ang) - (float(self.accMode))*2.0*math.cos(self.ang), self.ypos - 6.0*math.sin(self.ang) -(float(self.accMode))*2.0*math.sin(self.ang)), (255, 255, 255))
-        screen.draw.circle((self.xpos, self.ypos), 6, (255,255,255))
+            screen.draw.line(
+                (self.xpos - 6.0 * math.cos(self.ang + (PI / 6.0)),
+                 self.ypos - 6.0 * math.sin(self.ang + PI / 6.0)),
+                (self.xpos - 6.0 * math.cos(self.ang) -
+                 (float(self.accMode)) * 2.0 * math.cos(self.ang),
+                 self.ypos - 6.0 * math.sin(self.ang) -
+                 (float(self.accMode)) * 2.0 * math.sin(self.ang)),
+                (255, 255, 255))
+            screen.draw.line(
+                (self.xpos - 6.0 * math.cos(self.ang - (PI / 6.0)),
+                 self.ypos - 6.0 * math.sin(self.ang - PI / 6.0)),
+                (self.xpos - 6.0 * math.cos(self.ang) -
+                 (float(self.accMode)) * 2.0 * math.cos(self.ang),
+                 self.ypos - 6.0 * math.sin(self.ang) -
+                 (float(self.accMode)) * 2.0 * math.sin(self.ang)),
+                (255, 255, 255))
+        screen.draw.circle((self.xpos, self.ypos), 6, (255, 255, 255))
 
     # Check if ship collides with terrain from given terrain vectors
     def collision(self, xt, yt):
@@ -138,16 +154,19 @@ class Ship:
 
         for i in range(0, len(xt)):
             for j in range(0, len(self.bodyXPoints)):
-                if self.bodyXPoints[j] > xt[i] - 2 and self.bodyXPoints[j] < xt[i] + 2:
+                if self.bodyXPoints[j] > xt[i] - 2 and self.bodyXPoints[
+                        j] < xt[i] + 2:
                     if self.bodyYPoints[j] > yt[i]:
                         return 1
 
         for i in range(0, len(xt)):
             for k in range(0, len(self.foot1XPoints)):
-                if self.foot1XPoints[k] > xt[i] - 2 and self.foot1XPoints[k] < xt[i] + 2:
+                if self.foot1XPoints[k] > xt[i] - 2 and self.foot1XPoints[
+                        k] < xt[i] + 2:
                     if self.foot1YPoints[k] >= yt[i]:
                         foot1Touch = True
-                if self.foot2XPoints[k] > xt[i] - 2 and self.foot2XPoints[k] < xt[i] + 2:
+                if self.foot2XPoints[k] > xt[i] - 2 and self.foot2XPoints[
+                        k] < xt[i] + 2:
                     if self.foot2YPoints[k] >= yt[i]:
                         foot2Touch = True
                 if foot1Touch and foot2Touch:
@@ -155,10 +174,12 @@ class Ship:
 
         for i in range(0, len(xt)):
             for k in range(0, len(self.leg1XPoints)):
-                if self.leg1XPoints[k] > xt[i] - 2 and self.leg1XPoints[k] < xt[i] + 2:
+                if self.leg1XPoints[k] > xt[i] - 2 and self.leg1XPoints[
+                        k] < xt[i] + 2:
                     if self.leg1YPoints[k] >= yt[i]:
                         return 1
-                if self.leg2XPoints[k] > xt[i] - 2 and self.leg2XPoints[k] < xt[i] + 2:
+                if self.leg2XPoints[k] > xt[i] - 2 and self.leg2XPoints[
+                        k] < xt[i] + 2:
                     if self.leg2YPoints[k] >= yt[i]:
                         return 1
 
@@ -177,18 +198,26 @@ class Ship:
         self.foot2XPoints.clear()
         self.foot2YPoints.clear()
 
-        for i in self.frange(0, 2.0*PI, 0.25):
-            self.bodyXPoints.append(int(round(self.xpos - 6.0*math.cos(i))))
-            self.bodyYPoints.append(int(round(self.ypos - 6.0*math.sin(i))))
+        for i in self.frange(0, 2.0 * PI, 0.25):
+            self.bodyXPoints.append(int(round(self.xpos - 6.0 * math.cos(i))))
+            self.bodyYPoints.append(int(round(self.ypos - 6.0 * math.sin(i))))
 
         for i in self.frange(6.0, 11.0, 1):
-            self.leg1XPoints.append(int(round(self.xpos - i*math.cos(self.ang + (PI/6.0)))))
-            self.leg1YPoints.append(int(round(self.ypos - i*math.sin(self.ang + (PI/6.0)))))
-            self.leg2XPoints.append(int(round(self.xpos - i*math.cos(self.ang - (PI/6.0)))))
-            self.leg2YPoints.append(int(round(self.ypos - i*math.sin(self.ang - (PI/6.0)))))
+            self.leg1XPoints.append(
+                int(round(self.xpos - i * math.cos(self.ang + (PI / 6.0)))))
+            self.leg1YPoints.append(
+                int(round(self.ypos - i * math.sin(self.ang + (PI / 6.0)))))
+            self.leg2XPoints.append(
+                int(round(self.xpos - i * math.cos(self.ang - (PI / 6.0)))))
+            self.leg2YPoints.append(
+                int(round(self.ypos - i * math.sin(self.ang - (PI / 6.0)))))
 
         for i in self.frange(11.0, 12.0, 1):
-            self.foot1XPoints.append(int(round(self.xpos - i*math.cos(self.ang + (PI/6.0)))))
-            self.foot1YPoints.append(int(round(self.ypos - i*math.sin(self.ang + (PI/6.0)))))
-            self.foot2XPoints.append(int(round(self.xpos - i*math.cos(self.ang - (PI/6.0)))))
-            self.foot2YPoints.append(int(round(self.ypos - i*math.sin(self.ang - (PI/6.0)))))
+            self.foot1XPoints.append(
+                int(round(self.xpos - i * math.cos(self.ang + (PI / 6.0)))))
+            self.foot1YPoints.append(
+                int(round(self.ypos - i * math.sin(self.ang + (PI / 6.0)))))
+            self.foot2XPoints.append(
+                int(round(self.xpos - i * math.cos(self.ang - (PI / 6.0)))))
+            self.foot2YPoints.append(
+                int(round(self.ypos - i * math.sin(self.ang - (PI / 6.0)))))

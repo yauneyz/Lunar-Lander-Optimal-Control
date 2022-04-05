@@ -113,7 +113,7 @@ class Terrain:
             self._x[self._multipliersIndexes[i] + self._multipliersLengths[i] - 1],
             self._y[self._multipliersIndexes[i] + self._multipliersLengths[i] - 1] - 2), (255, 255, 255))
             screen.draw.text(multi, ((self._x[self._multipliersIndexes[i]] + self._x[self._multipliersIndexes[i] +
-                                      self._multipliersLengths[i] - 1]) / 2.0-8, self._y[self._multipliersIndexes[i]] + 15), fontsize = 16, fontname="dylova")
+                                      self._multipliersLengths[i] - 1]) / 2.0-8, self._y[self._multipliersIndexes[i]] + 15), fontsize = 16, fontname="roboto")
 
     # Calculate actual x and y points for collision detection
     def points(self):
