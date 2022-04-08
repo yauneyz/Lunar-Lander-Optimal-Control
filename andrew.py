@@ -108,6 +108,5 @@ class Controller:
         desired_f = self.u_opt @ state_err
         T_desired = np.linalg.norm(desired_f)
         theta_desired = np.arctan2(desired_f[0], desired_f[1])
-        print("Goal Position", x_target, y_target)
 
         return theta_desired, T_desired

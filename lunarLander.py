@@ -3,7 +3,7 @@ import ship as lander
 import terrain as land
 # from control import op_traject as Controller
 #from controller import get_control
-from andrew import Controller
+from andrew import Controller,PID
 import time
 import numpy as np
 
@@ -28,7 +28,7 @@ class Game:
         self.collided = 0
 
         # Variables for physics
-        self.dt = 5e-2
+        self.dt = 1e-1
 
         # Used to see what kind of landing: good landing (1), hard landing (2), or a crash (3)
         self.landingType = 0
@@ -46,6 +46,7 @@ class Game:
         self.resetLife()
         game.state = 2
         game.score = 0
+        game.landPID = PID(0.5,0.4,1e-3,dT = self.dt) 
         game.ship.setGas(1e20)
 
     # Reset settings for new life
@@ -228,19 +229,19 @@ def update(dt):
 
             # Consider gravity
 
-
             # Get the controls
             state = [game.x, game.y, game.xv, game.yv]
-            #time.sleep(dt)
-
-            theta, T = game.control.get_control(game.control_time, *state)
-            print("Postion", game.x, game.y)
-            print("Control", theta, T)
-
+            if game.control_time < np.abs(game.control.tf):
+                theta, T = game.control.get_control(game.control_time, *state)
         
-            game.control_time += dt
-            game.ship.set_strong_control(T,theta)
-            game.ship.step()
+                game.control_time += dt
+                game.ship.set_strong_control(T,theta)
+                game.ship.step()
+            else:
+                T_control = game.landPID.step(game.yf - game.y)
+                game.ship.set_strong_control(T_control,0)
+                game.ship.step()
+
 
             # Q key; Effectively quit program
             if keyboard.q:
