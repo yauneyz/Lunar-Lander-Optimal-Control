@@ -1,6 +1,8 @@
 import random
 
 # Terrain class
+
+
 class Terrain:
     # Initialize terrain vecotrs
     def __init__(self):
@@ -59,7 +61,7 @@ class Terrain:
 
         else:
             #  Calculate intermediate x and y points
-            for j in range(len(self._x)-1):
+            for j in range(len(self._x) - 1):
                 i = j + 1
 
                 # Calculate the x and y midpoints
@@ -67,7 +69,8 @@ class Terrain:
                 midy = self.midpoint(self._y[i], self._y[i - 1])
 
                 # Varies the midpoint height by changing it by a random number between -displacement and displacement.
-                midy += random.uniform(0.0, 1.0) * displacement - displacement/2.
+                midy += random.uniform(0.0, 1.0) * \
+                    displacement - displacement/2.
 
                 # Makes it so the terrain can't be lower than 25 pixels from the bottom of the height
                 if midy > height - 25:
@@ -100,29 +103,44 @@ class Terrain:
 
     # Draw the terrain
     def draw(self, screen):
-        for j in range(len(self._x)-1):
+        for j in range(len(self._x) - 1):
             i = j + 1
-            screen.draw.line((self._x[i - 1], self._y[i - 1]), (self._x[i], self._y[i]), (255, 255, 255))
+            screen.draw.line((self._x[i - 1], self._y[i - 1]),
+                             (self._x[i], self._y[i]), (255, 255, 255))
 
         for i in range(len(self._multipliersIndexes)):
             multi = str(self._multipliersValues[i]) + "x"
-            screen.draw.line((self._x[self._multipliersIndexes[i]], self._y[self._multipliersIndexes[i]] - 1), (
-            self._x[self._multipliersIndexes[i] + self._multipliersLengths[i] - 1],
-            self._y[self._multipliersIndexes[i] + self._multipliersLengths[i] - 1] - 1), (255, 255, 255))
-            screen.draw.line((self._x[self._multipliersIndexes[i]], self._y[self._multipliersIndexes[i]] - 2), (
-            self._x[self._multipliersIndexes[i] + self._multipliersLengths[i] - 1],
-            self._y[self._multipliersIndexes[i] + self._multipliersLengths[i] - 1] - 2), (255, 255, 255))
-            screen.draw.text(multi, ((self._x[self._multipliersIndexes[i]] + self._x[self._multipliersIndexes[i] +
-                                      self._multipliersLengths[i] - 1]) / 2.0-8, self._y[self._multipliersIndexes[i]] + 15), fontsize = 16, fontname="roboto")
+            screen.draw.line((self._x[self._multipliersIndexes[i]],
+                              self._y[self._multipliersIndexes[i]] - 1),
+                             (self._x[self._multipliersIndexes[i] +
+                                      self._multipliersLengths[i] - 1],
+                              self._y[self._multipliersIndexes[i] +
+                                      self._multipliersLengths[i] - 1] - 1),
+                             (255, 255, 255))
+            screen.draw.line((self._x[self._multipliersIndexes[i]],
+                              self._y[self._multipliersIndexes[i]] - 2),
+                             (self._x[self._multipliersIndexes[i] +
+                                      self._multipliersLengths[i] - 1],
+                              self._y[self._multipliersIndexes[i] +
+                                      self._multipliersLengths[i] - 1] - 2),
+                             (255, 255, 255))
+            screen.draw.text(
+                multi, ((self._x[self._multipliersIndexes[i]] +
+                         self._x[self._multipliersIndexes[i] +
+                                 self._multipliersLengths[i] - 1]) / 2.0 - 8,
+                        self._y[self._multipliersIndexes[i]] + 15),
+                fontsize=16,
+                fontname="roboto")
 
     # Calculate actual x and y points for collision detection
     def points(self):
         self._xPoints = []
         self._yPoints = []
 
-        for s in range(len(self._x)-1):
+        for s in range(len(self._x) - 1):
             i = s + 1
-            slope = (self._y[i] - self._y[i - 1]) / (self._x[i] - self._x[i - 1])
+            slope = (self._y[i] - self._y[i - 1]) / \
+                (self._x[i] - self._x[i - 1])
             yPrev = self._y[i - 1]
             working = True
             j = self._x[i - 1]
@@ -164,10 +182,12 @@ class Terrain:
                 for k in range(len(self._multipliersIndexes)):
                     for l in range(len(self._multipliersLengths)):
                         for m in range(length):
-                            if self._x[place + m] == self._x[self._multipliersIndexes[k] + l]:
+                            if self._x[place + m] == self._x[
+                                    self._multipliersIndexes[k] + l]:
                                 overlapped = True
                                 length = random.randint(0, 32767) % 4 + 2
-                                place = random.randint(0, 32767) % (len(self._x) - 5)
+                                place = random.randint(
+                                    0, 32767) % (len(self._x) - 5)
                                 break
                         if overlapped:
                             break
@@ -202,7 +222,9 @@ class Terrain:
     # Otherwise, 1 is returned.
     def multiplierCheck(self, xpos):
         for i in range(len(self._multipliersIndexes)):
-            if xpos >= self._x[self._multipliersIndexes[i]] and xpos <= self._x[self._multipliersIndexes[i] + self._multipliersLengths[i] - 1]:
+            if xpos >= self._x[self._multipliersIndexes[
+                    i]] and xpos <= self._x[self._multipliersIndexes[i] +
+                                            self._multipliersLengths[i] - 1]:
                 return self._multipliersValues[i]
 
         return 1

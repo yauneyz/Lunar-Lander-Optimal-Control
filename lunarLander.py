@@ -1,7 +1,10 @@
 import pgzrun
 import ship as lander
 import terrain as land
+# from control import op_traject as Controller
 from controller import get_control
+from andrew import Controller
+import time
 
 WIDTH = 1400
 HEIGHT = 800
@@ -44,11 +47,23 @@ class Game:
         # Used to schedule a life reset after the landing/crash screen
         self.resetScheduled = False
 
+        # Set the goal
+        self.xf = 0
+        self.yf = 640
+
+        # Initialize the control
+        init_state = [
+            self.x, self.y, self.xVel, self.yVel, self.xf, self.yf, 1, 1e-1, 5
+        ]
+
+        self.control = Controller(*init_state)
+        self.control_time = 0
+
     # Reset game state
     def resetGame(self):
         game.state = 2
         game.score = 0
-        game.ship.setGas(750)
+        game.ship.setGas(1e20)
         self.resetLife()
 
     # Reset settings for new life
@@ -240,20 +255,17 @@ def update(dt):
             game.ship.setVel(game.xVel, game.yVel)
 
             # Get the controls
-            left, right, down, up = get_control()
-            print(left, right, up, down)
-            # Left Arrow. Rotate left.
-            if left:
-                game.ship.rotate(game.ang - PI / 14.0)
-            # Right Arrow. Rotate right.
-            elif right:
-                game.ship.rotate(game.ang + PI / 14.0)
-            # Down Arrow. Decrease rocket thrust
-            if down:
-                game.ship.accelerateChange(-1, sounds)
-            # Up arrow. Increase rocket thrust
-            elif up:
-                game.ship.accelerateChange(1, sounds)
+            state = [game.x, -game.y, game.xVel, -game.yVel]
+            time.sleep(0.1)
+
+            theta, T = game.control.get_control(game.control_time, *state)
+            print("Postion", game.x, game.y)
+            print("Control", theta, T)
+            game.control_time += 1 / 10
+
+            game.ship.setAng(theta)
+            game.ship.setAccMode(T)
+
             # Q key; Effectively quit program
             if keyboard.q:
                 game.state = 1

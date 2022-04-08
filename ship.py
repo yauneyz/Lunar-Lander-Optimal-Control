@@ -76,12 +76,7 @@ class Ship:
 
     # Rotate ship. Min angle of -PI and max angle of 0
     def rotate(self, newAng):
-        if newAng > 0:
-            self.ang = 0
-        elif newAng < -PI:
-            self.ang = -PI
-        else:
-            self.ang = newAng
+        self.ang = newAng
 
     # Set angle
     def setAng(self, angle):
@@ -101,8 +96,8 @@ class Ship:
 
     # Calculate new x and y velocities based on thrust power. Consumes gas.
     def accelerate(self, xv, yv):
-        xv = xv + .09 * self.accMode * math.cos(self.ang)
-        yv = yv + .175 * self.accMode * math.sin(self.ang)
+        xv = xv + self.accMode * math.cos(self.ang)
+        yv = yv + self.accMode * math.sin(self.ang)
         self.gas = self.gas - .08 * self.accMode
         if self.gas < 0:
             self.gas = 0
