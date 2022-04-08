@@ -2,9 +2,10 @@ import pgzrun
 import ship as lander
 import terrain as land
 # from control import op_traject as Controller
-from controller import get_control
+#from controller import get_control
 from andrew import Controller
 import time
+import numpy as np
 
 WIDTH = 1400
 HEIGHT = 800
@@ -21,57 +22,37 @@ class Game:
         self.score = 0
         self.state = 1
         self.multiplier = 1
-        self.gas = 0
         self.playing = True
 
         # Used to see if there is no collision (0), a crash (1), or a potential landing (2)
         self.collided = 0
 
         # Variables for physics
-        self.dt = 0.01
-        self.xVel = 0
-        self.yVel = 0
-        self.x = 0
-        self.y = 0
-        self.ang = 0
+        self.dt = 5e-2
 
         # Used to see what kind of landing: good landing (1), hard landing (2), or a crash (3)
         self.landingType = 0
 
         # Ship and terrain objects
-        self.ship = lander.Ship()
         self.terrain = land.Terrain()
         self.xTerrain = []
         self.yTerrain = []
 
         # Used to schedule a life reset after the landing/crash screen
         self.resetScheduled = False
-
-        # Set the goal
-        self.xf = 0
-        self.yf = 640
-
-        # Initialize the control
-        init_state = [
-            self.x, self.y, self.xVel, self.yVel, self.xf, self.yf, 1, 1e-1, 5
-        ]
-
-        self.control = Controller(*init_state)
-        self.control_time = 0
-
+        
     # Reset game state
     def resetGame(self):
+        self.resetLife()
         game.state = 2
         game.score = 0
         game.ship.setGas(1e20)
-        self.resetLife()
 
     # Reset settings for new life
     def resetLife(self):
-        game.ship.setPos(100, 100)
-        game.ship.setVel(50, 0)
-        game.ship.setAng(0)
-        game.ship.setAccMode(0)
+        game.ship = lander.Ship(100,600,0,0,0,0,1,self.dt)
+        self.x,self.y,self.xv,self.yv,self.T,self.theta = game.ship.get_state()
+
         game.terrain.generate(WIDTH, HEIGHT, 450, 1)
         game.collided = 0
         game.multiplier = 1
@@ -80,6 +61,14 @@ class Game:
         game.playing = True
         game.resetScheduled = False
 
+        self.xf,self.yf = self.terrain.get_goal()
+        # Initialize the control
+        init_state = [100, 600, 0, 0, self.xf, HEIGHT - self.yf, 1, 1e-1, 15]
+
+        self.control = Controller(*init_state)
+        self.control_time = 0
+
+
     # Callback for switching from game over screen
     def gameOver(self):
         game.resetScheduled = False
@@ -87,6 +76,7 @@ class Game:
 
 
 game = Game()
+game.resetGame()
 
 # Main logic for drawing
 
@@ -119,8 +109,8 @@ def draw():
         gasStr = "FUEL       " + str(int(game.gas))
         altStr = "ALTITUDE                      " + \
             str(int(HEIGHT - 10 - game.y))
-        xVelStr = "HORIZONTAL SPEED    " + str(int(game.xVel))
-        yVelStr = "VERTICAL SPEED         " + str(int(-game.yVel))
+        xVelStr = "HORIZONTAL SPEED    " + str(int(game.xv))
+        yVelStr = "VERTICAL SPEED         " + str(int(-game.yv))
         screen.draw.text(scoreStr, (40, 40), fontsize=20, fontname="roboto")
         screen.draw.text(gasStr, (40, 60), fontsize=20, fontname="roboto")
         screen.draw.text(altStr, (WIDTH - 260, 40),
@@ -175,7 +165,7 @@ def draw():
         gasStr = "FUEL       " + str(int(game.gas))
         altStr = "ALTITUDE                      " + \
             str(int(HEIGHT - 10 - game.y))
-        xVelStr = "HORIZONTAL SPEED    " + str(int(game.xVel))
+        xVelStr = "HORIZONTAL SPEED    " + str(int(game.xv))
         yVelStr = "VERTICAL SPEED         " + str(int(-game.yVel))
         screen.draw.text(scoreStr, (40, 40), fontsize=20, fontname="roboto")
         screen.draw.text(gasStr, (40, 60), fontsize=20, fontname="roboto")
@@ -214,14 +204,8 @@ def update(dt):
         if game.playing:
             # Get the fuel, velocities, positions, and angle
             game.gas = game.ship.getGas()
-            game.xVel = game.ship.getXvel()
-            game.yVel = game.ship.getYvel()
-            game.x = game.ship.getXpos()
-            game.y = game.ship.getYpos()
-            game.ang = game.ship.getAng()
 
-            game.y = game.y + game.yVel * game.dt + 0.5 * 30.0 * game.dt * game.dt
-            game.x = game.x + game.xVel * game.dt
+            game.x,game.xv,game.y,game.yv,game.T,game.theta = game.ship.get_state()
 
             # If ship goes off on the side of the screen, it is moved to the other side.
             if game.x > WIDTH + 10:
@@ -233,38 +217,30 @@ def update(dt):
             if game.y < -50:
                 game.x = 100
                 game.y = 100
-                game.xVel = 50
-                game.yVel = 0
-                game.ship.setAng(0)
-                game.ship.setAccMode(0)
+                game.xv = 50
+                game.yv = 0
 
             # Makes x velocity stay within - 100 and 100 inclusive
-            if game.xVel >= 100:
-                game.xVel = 100
-            elif game.xVel <= -100:
-                game.xVel = -100
+            if game.xv >= 100:
+                game.xv = 100
+            elif game.xv <= -100:
+                game.xv = -100
 
             # Consider gravity
-            game.yVel = game.yVel + 10.0 * game.dt
 
-            # Calculate new velocities based on ship acceleration
-            game.xVel, game.yVel = game.ship.accelerate(game.xVel, game.yVel)
-
-            # Update ship's new velocities and position
-            game.ship.setPos(game.x, game.y)
-            game.ship.setVel(game.xVel, game.yVel)
 
             # Get the controls
-            state = [game.x, -game.y, game.xVel, -game.yVel]
-            time.sleep(0.1)
+            state = [game.x, game.y, game.xv, game.yv]
+            #time.sleep(dt)
 
             theta, T = game.control.get_control(game.control_time, *state)
             print("Postion", game.x, game.y)
             print("Control", theta, T)
-            game.control_time += 1 / 10
 
-            game.ship.setAng(theta)
-            game.ship.setAccMode(T)
+        
+            game.control_time += dt
+            game.ship.set_strong_control(T,theta)
+            game.ship.step()
 
             # Q key; Effectively quit program
             if keyboard.q:
@@ -275,7 +251,8 @@ def update(dt):
 
             # Checks if the ship collided with the terrain
             game.collided = 0
-            game.collided = game.ship.collision(game.xTerrain, game.yTerrain)
+            game.collided = game.ship.collision(game.xTerrain,game.yTerrain)
+            game.collided = 0
 
             # Crashed
             if game.collided == 1:
@@ -292,12 +269,12 @@ def update(dt):
                     game.ship.getXpos())
 
                 # If the user has a good landing
-                if game.yVel < 12 and abs(game.xVel) < 25:
+                if game.yVel < 12 and abs(game.xv) < 25:
                     game.landingType = 1
                     game.ship.setGas(game.ship.getGas() + 50)
                     game.score += game.multiplier * 50
                 # If the user has a hard landing
-                elif game.yVel < 25 and abs(game.xVel) < 25:
+                elif game.yVel < 25 and abs(game.xv) < 25:
                     game.landingType = 2
                     game.score += game.multiplier * 15
                 # If the user was going too fast resulting in a crash

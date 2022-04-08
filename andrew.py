@@ -1,10 +1,12 @@
 import numpy as np
 from scipy.integrate import solve_bvp
 from scipy.linalg import solve_continuous_are
+import matplotlib.pyplot as plt
 
 
 class op_traject():
     def calc_approach(self, x0, y0, vx0, vy0, xf, yf, m, alpha, buf):
+        print(x0,y0,xf,yf)
         yf = yf + buf
         # set up the right hand side of the ODE, with the parameter
         # tf (the final time rescaled)
@@ -82,7 +84,7 @@ class Controller:
         self.A = np.array([[0, 1, 0, 0], [0, 0, 0, 0], [0, 0, 0, 1],
                            [0, 0, 0, 0]])
         self.B = np.array([[0, 0], [1 / m, 0], [0, 0], [0, 1 / m]])
-        self.Q = np.diag([1e-6, 1e-10, 1e-6, 1e-10])
+        self.Q = np.diag([1, 1e-100, 1, 1e-100])
         self.R = np.diag([1 / 30, 1 / 30])
         self.P = solve_continuous_are(self.A, self.B, self.Q, self.R)
         self.u_opt = -np.linalg.inv(self.R) @ self.B.T @ self.P
@@ -90,9 +92,14 @@ class Controller:
         self.trajectory.calc_approach(x0, y0, xv0, yv0, xf, yf, m, alpha, buf)
         self.tf = self.trajectory.tf
 
+        #plt.plot(self.trajectory.traj[:,0],self.trajectory.traj[:,1])
+        #plt.show()
+
     def get_control(self, t, x_actual, y_actual, xv_actual, yv_actual):
         x_target, xv_target, y_target, yv_target = self.trajectory.get_goal(
             t)[:4]
+
+
 
         state_err = np.array([
             x_actual - x_target, xv_actual + xv_target, y_actual - y_target,

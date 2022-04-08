@@ -228,3 +228,6 @@ class Terrain:
                 return self._multipliersValues[i]
 
         return 1
+
+    def get_goal(self):
+        return self._x[self._multipliersIndexes[0]] + 10,self._y[self._multipliersIndexes[0]]
