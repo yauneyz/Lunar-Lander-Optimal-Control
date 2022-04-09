@@ -1,4 +1,5 @@
 import random
+import numpy as np
 
 # Terrain class
 
@@ -230,4 +231,6 @@ class Terrain:
         return 1
 
     def get_goal(self):
-        return self._x[self._multipliersIndexes[0]] + 10,self._y[self._multipliersIndexes[0]]
+        self.max_idx = np.argmax(np.array(self._multipliersValues))
+        self.max_val =self._multipliersValues[self.max_idx] 
+        return self._x[self._multipliersIndexes[self.max_idx]] + 10,self._y[self._multipliersIndexes[self.max_idx]]

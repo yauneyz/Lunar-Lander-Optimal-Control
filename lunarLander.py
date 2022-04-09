@@ -28,7 +28,7 @@ class Game:
         self.collided = 0
 
         # Variables for physics
-        self.dt = 1e-1
+        self.dt = 1e-2
 
         # Used to see what kind of landing: good landing (1), hard landing (2), or a crash (3)
         self.landingType = 0
@@ -46,12 +46,12 @@ class Game:
         self.resetLife()
         game.state = 2
         game.score = 0
-        game.landPID = PID(0.5,0.4,1e-3,dT = self.dt) 
-        game.ship.setGas(1e20)
+        game.landPID = PID(0.1,0.04,1e-2,dT = self.dt) 
 
     # Reset settings for new life
     def resetLife(self):
         game.ship = lander.Ship(100,600,0,0,0,0,1,self.dt)
+        game.ship.setGas(1e3)
         self.x,self.y,self.xv,self.yv,self.T,self.theta = game.ship.get_state()
 
         game.terrain.generate(WIDTH, HEIGHT, 450, 1)
@@ -64,7 +64,7 @@ class Game:
 
         self.xf,self.yf = self.terrain.get_goal()
         # Initialize the control
-        init_state = [100, 600, 0, 0, self.xf, HEIGHT - self.yf, 1, 1e-1, 15]
+        init_state = [100, 600, 0, 0, self.xf, HEIGHT - self.yf, 1, 1e-100, 15]
 
         self.control = Controller(*init_state)
         self.control_time = 0
@@ -230,7 +230,7 @@ def update(dt):
             # Consider gravity
 
             # Get the controls
-            state = [game.x, game.y, game.xv, game.yv]
+            state = [game.x,game.y, game.xv, game.yv]
             if game.control_time < np.abs(game.control.tf):
                 theta, T = game.control.get_control(game.control_time, *state)
         
@@ -238,9 +238,14 @@ def update(dt):
                 game.ship.set_strong_control(T,theta)
                 game.ship.step()
             else:
-                T_control = game.landPID.step(game.yf - game.y)
-                game.ship.set_strong_control(T_control,0)
+                T_control = game.landPID.step(game.yf - (HEIGHT -game.y))
+                game.ship.set_strong_control(9.7,0.01)
                 game.ship.step()
+
+
+            if game.y < 13 + HEIGHT - game.yf:
+                game.score += int(10*np.sqrt(game.terrain.max_val*game.ship.getGas()))
+                game.resetLife()
 
 
             # Q key; Effectively quit program

@@ -45,6 +45,7 @@ class Ship():
         
         self.T += self.T_c
         self.theta += self.theta_c
+        self.gas -= self.T*self.dT
         
         if self.T > self.max_T:
             self.T = self.max_T
@@ -93,34 +94,22 @@ class Ship():
 
     # Draw ship
     def draw(self, screen):
-        screen.draw.line((self.x - 6.0 * math.cos(self.theta + (PI / 6.0)),
-                         HEIGHT - (self.y - 6.0 * math.sin(self.theta + PI / 6.0))),
-                         (self.x - 12.0 * math.cos(self.theta + (PI / 6.0)),
-                          HEIGHT - (self.y - 12.0 * math.sin(self.theta + PI / 6.0))),
+        self.theta = -self.theta + np.pi
+        screen.draw.line((self.x - 6.0 * math.sin(self.theta + (PI / 6.0)),
+                         (HEIGHT - self.y) - 6.0 * math.cos(self.theta + PI / 6.0)),
+                         (self.x - 12.0 * math.sin(self.theta + (PI / 6.0)),
+                          (HEIGHT - self.y) - 12.0 * math.cos(self.theta + PI / 6.0)),
                          (255, 255, 255))
-        screen.draw.line((self.x - 6.0 * math.cos(self.theta - (PI / 6.0)),
-                          HEIGHT - (self.y - 6.0 * math.sin(self.theta - PI / 6.0))),
-                         (self.x - 12.0 * math.cos(self.theta - (PI / 6.0)),
-                          HEIGHT - (self.y - 12.0 * math.sin(self.theta - PI / 6.0))),
+        screen.draw.line((self.x - 6.0 * math.sin(self.theta - (PI / 6.0)),
+                          (HEIGHT - self.y) - 6.0 * math.cos(self.theta - PI / 6.0)),
+                         (self.x - 12.0 * math.sin(self.theta - (PI / 6.0)),
+                          (HEIGHT - self.y) - 12.0 * math.cos(self.theta - PI / 6.0)),
                          (255, 255, 255))
-        if self.T > 0:
-            screen.draw.line(
-                (self.x - 6.0 * math.cos(self.theta + (PI / 6.0)),
-                 self.y - 6.0 * math.sin(self.theta + PI / 6.0)),
-                (self.x - 6.0 * math.cos(self.theta) -
-                 (float(self.T)) * 2.0 * math.cos(self.theta),
-                 HEIGHT - (self.y - 6.0 * math.sin(self.theta) -
-                 (float(self.T)) * 2.0 * math.sin(self.theta))),
-    (255, 255, 255))
-            screen.draw.line(
-                (self.x - 6.0 * math.cos(self.theta - (PI / 6.0)),
-                 HEIGHT - (self.y - 6.0 * math.sin(self.theta - PI / 6.0))),
-                (self.x - 6.0 * math.cos(self.theta) -
-                 (float(self.T)) * 2.0 * math.cos(self.theta),
-                 HEIGHT - (self.y - 6.0 * math.sin(self.theta)) -
-                 (float(self.T)) * 2.0 * math.sin(self.theta)),
-                (255, 255, 255))
+        
+        
         screen.draw.circle((self.x, HEIGHT - self.y), 6, (255, 255, 255))
+
+        self.theta = -self.theta - np.pi
 
 
     # Check if ship collides with terrain from given terrain vectors

@@ -10,7 +10,7 @@ class op_traject():
         yf = yf + buf
         # set up the right hand side of the ODE, with the parameter
         # tf (the final time rescaled)
-        g = 9.8 / 1.5
+        g = 9.8 / 1.01
 
         def rocket_ode(t, y, p):
             tf = p[0]
@@ -70,7 +70,7 @@ class PID():
 
     def step(self, e):
         self.P = self.Kp * e
-        self.I += self.Ki * e * dT
+        self.I += self.Ki * e * self.dT
         self.D = self.Kd * (e - self.e_prev) / self.dT
         self.e_prev = e
         MV = self.MV_bar + self.P + self.I + self.D
@@ -84,8 +84,8 @@ class Controller:
         self.A = np.array([[0, 1, 0, 0], [0, 0, 0, 0], [0, 0, 0, 1],
                            [0, 0, 0, 0]])
         self.B = np.array([[0, 0], [1 / m, 0], [0, 0], [0, 1 / m]])
-        self.Q = np.diag([1, 1e-100, 1, 1e-100])
-        self.R = np.diag([1 / 30, 1 / 30])
+        self.Q = np.diag([1e-1, 1e-100, 1, 1e-100])
+        self.R = np.diag([1 / 300, 1 / 300])
         self.P = solve_continuous_are(self.A, self.B, self.Q, self.R)
         self.u_opt = -np.linalg.inv(self.R) @ self.B.T @ self.P
         self.trajectory = op_traject()
