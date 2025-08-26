@@ -1,0 +1,5 @@
+pgzero==1.2.1
+pygame==2.5.2
+numpy==1.26.4
+scipy==1.14.1
+matplotlib==3.6.3
